@@ -1,1 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>GEOG 458 Lab 4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
 
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #menu {
+            background: #fff;
+            position: absolute;
+            z-index: 1;
+            top: 10px;
+            right: 10px;
+            border-radius: 3px;
+            width: 120px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #menu a {
+            font-size: 13px;
+            color: #404040;
+            display: block;
+            margin: 0;
+            padding: 0;
+            padding: 10px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+            text-align: center;
+        }
+
+        #menu a:last-child {
+            border: none;
+        }
+
+        #menu a:hover {
+            background-color: #f8f8f8;
+            color: #404040;
+        }
+
+        #menu a.active {
+            background-color: #3887be;
+            color: #ffffff;
+        }
+
+        #menu a.active:hover {
+            background: #3074a4;
+        }
+    </style>
+</head>
+<body>
+    <nav id="menu"></nav>
+    <div id='map'></div>
+    <script>
+        mapboxgl.accessToken ='pk.eyJ1IjoiY2F0aHlhdCIsImEiOiJjbWwwMHh3bzQwODZyM2tva2JxbGttMGthIn0.J5ASwcXeg5WhWf7BtE7jHQ';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            zoom: 12,
+            center: [-122.335167, 47.608013]
+        });
+    map.on('load', () => {
+
+        // Tile Set 1
+        map.addSource('tileset_1', {
+            type: 'raster',
+            tiles: [
+                'assets/tileset_1/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: 'Custom basemap tiles designed by Cathya Tran'
+        });
+
+        map.addLayer({
+                id: 'tileset_1_layer',
+                type: 'raster',
+                source: 'tileset_1',
+                layout: {
+                    'visibility': 'none'
+                }
+            });
+
+        // Tile Set 2
+        map.addSource('tileset_2', {
+            type: 'raster',
+            tiles: [
+                'assets/tileset_2/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: 'Cafe points map tiles designed by Cathya Tran'
+        });
+
+        map.addLayer({
+                id: 'tileset_2_layer',
+                type: 'raster',
+                source: 'tileset_2',
+                layout: {
+                    'visibility': 'none'
+                }
+            });
+
+        // Tile Set 3
+        map.addSource('tileset_3', {
+            type: 'raster',
+            tiles: [
+                'assets/tileset_3/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: 'Combined basemap and cafe points map tiles designed by Cathya Tran'
+        });
+        
+        map.addLayer({
+                id: 'tileset_3_layer',
+                type: 'raster',
+                source: 'tileset_3',
+                layout: {
+                    'visibility': 'none'
+                }
+            });
+
+        // Tile Set 4
+        map.addSource('tileset_4', {
+            type: 'raster',
+            tiles: [
+                'assets/tileset_4/{z}/{x}/{y}.png'
+            ],
+            tileSize: 256,
+            attribution: 'Seattle Seahawks themed map tiles designed by Cathya Tran'
+        });
+
+        map.addLayer({
+                id: 'tileset_4_layer',
+                type: 'raster',
+                source: 'tileset_4',
+                layout: {
+                    'visibility': 'none'
+                }
+            });
+    });
+
+        const toggleableLayerIds = [
+            'tileset_1_layer',
+            'tileset_2_layer',
+            'tileset_3_layer',
+            'tileset_4_layer'
+        ];
+
+        for (const id of toggleableLayerIds) {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'inactive';
+
+            if (id === 'tileset_1_layer') link.textContent = 'Basemap';
+            if (id === 'tileset_2_layer') link.textContent = 'Favorite Cafes';
+            if (id === 'tileset_3_layer') link.textContent = 'Basemap + Favorite Cafes';
+            if (id === 'tileset_4_layer') link.textContent = 'Seahawks Themed Map';
+
+            link.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const visibility = map.getLayoutProperty(id, 'visibility');
+
+                if (visibility === 'visible') {
+                    map.setLayoutProperty(id, 'visibility', 'none');
+                    this.className = 'inactive';
+                } else {
+                    map.setLayoutProperty(id, 'visibility', 'visible');
+                    this.className = 'active';
+                }
+            };
+            document.getElementById('menu').appendChild(link);
+        }
+    </script>
+</body>
+</html>
